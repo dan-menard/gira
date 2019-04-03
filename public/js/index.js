@@ -9,14 +9,14 @@
       return;
     } else {
       const projectId = targetId.split('-')[1];
-      console.log(projectId);
+      document.location.assign(document.location + projectId);
     }
   }
 
   function getProjects() {
     const orgSlashRepo = document.querySelector('#projectLocation').value;
 
-    fetch(githubApi + `repos/${orgSlashRepo}/projects`, {
+    fetch(githubApi + `repos/${orgSlashRepo}/projects?state=open`, {
       headers: {
         'Accept': 'application/vnd.github.inertia-preview+json',
         'Authorization': `token ${token}`,

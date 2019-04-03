@@ -10,6 +10,10 @@ app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname + '/index.html'));
 });
 
+app.get('/[0-9]+', function(req, res) {
+  res.sendFile(path.join(__dirname + '/show.html'));
+});
+
 app.get('/githubToken', function(req, res) {
   fs.readFile(path.join(__dirname + '/.env'), function(err, data) {
     if (err) {
