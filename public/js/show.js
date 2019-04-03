@@ -2,22 +2,33 @@
   const githubApi = 'https://api.github.com/';
   const projectId = window.location.pathname.slice(1);
 
+  function getEventStream(cardContentUrl, headers) {
+    const eventStreamUrl = githubApi + cardContentUrl.split('com/')[1] + '/timeline';
+
+    const eventStreamHeaders = {
+      'Accept': 'application/vnd.github.starfox-preview+json, application/vnd.github.mockingbird-preview',
+      'Authorization': headers.Authorization,
+    };
+
+    fetch(eventStreamUrl, {headers: eventStreamHeaders})
+      .then(function(response) {
+        response.json().then(function(data) {
+          console.log(data);
+        });
+      });
+  }
+
   function getColumnsAndCards(headers) {
     fetch(githubApi + `projects/${projectId}/columns`, {headers})
       .then(function(columnResponse) {
         columnResponse.json().then(function(columnData) {
-          console.log('columns');
-          console.log(columnData);
-          console.log('');
-          console.log('cards:');
-          console.log('');
-
           columnData.forEach(function(datum) {
             fetch(datum.cards_url, {headers})
               .then(function(cardResponse) {
                 cardResponse.json().then(function(cardData) {
-                  console.log(cardData);
-                  console.log('');
+                  cardData.forEach(function(card) {
+                    getEventStream(card.content_url, headers);
+                  });
                 });
               });
           });
