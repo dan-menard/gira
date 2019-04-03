@@ -37,7 +37,7 @@
         'Authorization': `token ${token}`,
       }
     })
-      .then(function(response, other) {
+      .then(function(response) {
         response.json().then(function(data) {
           if (data.length === 0) {
             return;
