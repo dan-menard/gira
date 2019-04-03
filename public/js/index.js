@@ -23,6 +23,8 @@
       }
     })
       .then(function(response) {
+        window.localStorage.setItem('orgSlashRepo', orgSlashRepo);
+
         response.json().then(function(data) {
           let projectList = document.querySelector('#projectResults');
 
@@ -54,8 +56,17 @@
     document.querySelector('#projectResults').addEventListener('click', validateProjectResultClick);
   }
 
+  function loadMostRecentProjectSearch() {
+    const mostRecentSearch = window.localStorage.getItem('orgSlashRepo');
+
+    if (mostRecentSearch) {
+      document.querySelector('#projectLocation').value = mostRecentSearch;
+    }
+  }
+
   window.onload = function() {
-    setEventHandlers();
     getToken();
+    setEventHandlers();
+    loadMostRecentProjectSearch();
   };
 })();
