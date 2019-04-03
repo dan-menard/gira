@@ -15,8 +15,16 @@
 
   function getProjects() {
     const orgSlashRepo = document.querySelector('#projectLocation').value;
+    let url;
 
-    fetch(githubApi + `repos/${orgSlashRepo}/projects?state=open`, {
+    console.log(orgSlashRepo);
+    if (orgSlashRepo.indexOf('/') === -1) {
+      url = githubApi + `orgs/${orgSlashRepo}/projects?state=open`;
+    } else {
+      url = githubApi + `repos/${orgSlashRepo}/projects?state=open`;
+    }
+
+    fetch(url, {
       headers: {
         'Accept': 'application/vnd.github.inertia-preview+json',
         'Authorization': `token ${token}`,
