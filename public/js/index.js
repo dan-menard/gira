@@ -17,7 +17,6 @@
     const orgSlashRepo = document.querySelector('#projectLocation').value;
     let url;
 
-    console.log(orgSlashRepo);
     if (orgSlashRepo.indexOf('/') === -1) {
       url = githubApi + `orgs/${orgSlashRepo}/projects?state=open`;
     } else {
