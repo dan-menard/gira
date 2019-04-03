@@ -13,26 +13,36 @@
     }
   }
 
-  function getProjects() {
-    const orgSlashRepo = document.querySelector('#projectLocation').value;
-    let url;
+  function clearResults() {
+    let resultNode = document.querySelector('#projectResults');
 
-    if (orgSlashRepo.indexOf('/') === -1) {
-      url = githubApi + `orgs/${orgSlashRepo}/projects?state=open`;
-    } else {
-      url = githubApi + `repos/${orgSlashRepo}/projects?state=open`;
+    while(resultNode.lastChild) {
+      resultNode.removeChild(resultNode.lastChild);
+    }
+  }
+
+  function getProjects(event, page = 1) {
+    const orgSlashRepo = document.querySelector('#projectLocation').value;
+    const orgOrRepo = orgSlashRepo.indexOf('/') === -1 ? 'orgs' : 'repos';
+
+    // page is only 1 if the button was just clicked
+    if (page === 1) {
+      clearResults();
+      window.localStorage.setItem('orgSlashRepo', orgSlashRepo);
     }
 
-    fetch(url, {
+    fetch(githubApi + `${orgOrRepo}/${orgSlashRepo}/projects?state=open&page=${page}`, {
       headers: {
         'Accept': 'application/vnd.github.inertia-preview+json',
         'Authorization': `token ${token}`,
       }
     })
-      .then(function(response) {
-        window.localStorage.setItem('orgSlashRepo', orgSlashRepo);
-
+      .then(function(response, other) {
         response.json().then(function(data) {
+          if (data.length === 0) {
+            return;
+          }
+
           let projectList = document.querySelector('#projectResults');
 
           data.forEach(function(datum) {
@@ -45,6 +55,8 @@
             li.appendChild(button);
             projectList.appendChild(li);
           });
+
+          getProjects(event, page + 1);
         });
       });
   }
