@@ -2,6 +2,17 @@
   const githubApi = 'https://api.github.com/';
   let token = '';
 
+  function validateProjectResultClick(event) {
+    const targetId = event.target.id;
+
+    if (targetId.slice(0, 6) !== 'result') {
+      return;
+    } else {
+      const projectId = targetId.split('-')[1];
+      console.log(projectId);
+    }
+  }
+
   function getProjects() {
     const orgSlashRepo = document.querySelector('#projectLocation').value;
 
@@ -13,7 +24,18 @@
     })
       .then(function(response) {
         response.json().then(function(data) {
-          console.log(data);
+          let projectList = document.querySelector('#projectResults');
+
+          data.forEach(function(datum) {
+            let li = document.createElement('li');
+            let button = document.createElement('button');
+
+            button.id = `result-${datum.id}`;
+            button.innerHTML = datum.name;
+
+            li.appendChild(button);
+            projectList.appendChild(li);
+          });
         });
       });
   }
@@ -29,6 +51,7 @@
 
   function setEventHandlers() {
     document.querySelector('#loadProjectsButton').addEventListener('click', getProjects);
+    document.querySelector('#projectResults').addEventListener('click', validateProjectResultClick);
   }
 
   window.onload = function() {
