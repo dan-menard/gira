@@ -1,0 +1,14 @@
+{
+  "name": "gira",
+  "version": "1.0.0",
+  "description": "A Jira-like dashboard for Github project boards.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dan Menard",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
