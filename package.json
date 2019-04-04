@@ -9,6 +9,7 @@
   "author": "Dan Menard",
   "license": "ISC",
   "dependencies": {
+    "chart.js": "^2.8.0",
     "express": "^4.16.4"
   }
 }
