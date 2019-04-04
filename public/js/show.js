@@ -1,19 +1,69 @@
 (function() {
   const githubApi = 'https://api.github.com/';
   const projectId = window.location.pathname.slice(1);
+  const columnTransitionEvents = [];
 
-  function getEventStream(cardContentUrl, headers) {
-    const eventStreamUrl = githubApi + cardContentUrl.split('com/')[1] + '/timeline';
+  // Track when we're "done" fetching data.
+  let requestCount = 0;
+  let responseCount = 0;
+
+  const interestingEventTypes = [
+    'added_to_project',
+    // 'closed', TODO: handle this in the future
+    'converted_note_to_issue',
+    'moved_columns_in_project',
+    // 'reopened', TODO: handle this in the future
+  ];
+
+  function generateTransitionReport() {
+    if (requestCount && requestCount !== responseCount) {
+      return;
+    }
+
+    requestCount = 0;
+    responseCount = 0;
+
+    console.log(columnTransitionEvents);
+  }
+
+  function getEventStream(card, headers) {
+    const eventStreamUrl = githubApi + card.content_url.split('com/')[1] + '/timeline';
 
     const eventStreamHeaders = {
       'Accept': 'application/vnd.github.starfox-preview+json, application/vnd.github.mockingbird-preview',
       'Authorization': headers.Authorization,
     };
 
+    requestCount++;
+
     fetch(eventStreamUrl, {headers: eventStreamHeaders})
       .then(function(response) {
+        responseCount++;
+
         response.json().then(function(data) {
-          console.log(data);
+          const events = data.filter((datum) => {
+            return interestingEventTypes.includes(datum.event);
+          });
+
+          if (events.length) {
+            const eventData = events.map((event) => {
+              const projectCard = event.project_card;
+
+              return {
+                type: event.event,
+                timestamp: event.created_at,
+                fromColumn: projectCard.previous_column_name,
+                toColumn: projectCard.column_name,
+              };
+            });
+
+            columnTransitionEvents.push({
+              id: card.content_url.split('/').concat([]).pop(),
+              eventData: eventData
+            });
+          }
+
+          generateTransitionReport();
         });
       });
   }
@@ -27,13 +77,13 @@
               .then(function(cardResponse) {
                 cardResponse.json().then(function(cardData) {
                   cardData.forEach(function(card) {
-                    getEventStream(card.content_url, headers);
+                    getEventStream(card, headers);
                   });
                 });
               });
           });
         });
-      });
+      })
   }
 
   function getTokenAndData() {
