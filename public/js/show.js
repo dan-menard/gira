@@ -42,9 +42,10 @@
 
         return {
           data: columnData,
-          fill: false,
+          fill: true,
           lineTension: 0,
           spanGaps: true,
+          steppedLine: 'middle',
         };
       }).reverse()
     };
@@ -66,6 +67,10 @@
       type: 'line',
       data: getChartFriendlyData(),
       options: {
+        animation: {
+          duration: 0,
+        },
+        aspectRatio: 0.5,
         legend: {
           display: false,
         },
@@ -74,11 +79,11 @@
             position: 'top',
             ticks: {
               reverse: true,
-            }
+            },
           }],
           yAxes: [{
             scaleLabel: {
-              display: true,
+              display: false,
               labelString: 'Number of days',
             },
             ticks: {
@@ -86,7 +91,7 @@
               beginAtZero: true,
             },
           }]
-        }
+        },
       }
     });
   }
