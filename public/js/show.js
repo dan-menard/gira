@@ -31,20 +31,18 @@
           });
 
           if (!matchingEvent.length) {
-            return undefined; // TODO: does this actually work?
+            return undefined;
           }
 
           const happenedAt = new Date(matchingEvent[0].timestamp) * 1;
-          console.log(happenedAt);
-          console.log(dayZero);
-          console.log('');
           const dayCount = Math.round((happenedAt - dayZero) / 1000 / 60 / 60 / 24);
 
           return dayCount;
         });
 
         return {
-          data: columnData
+          data: columnData,
+          spanGaps: true
         };
       })
     };
@@ -58,9 +56,6 @@
       return;
     }
 
-    //console.log(columnTransitionEvents);
-
-    console.log('called');
     requestCount = 0;
     responseCount = 0;
 
