@@ -20,7 +20,7 @@
   // TODO: This assumes column moves are always forward, doesn't account for issues going backwards
   function getChartFriendlyData() {
     const data = {
-      labels: columnNames,
+      labels: columnNames.reverse(),
       datasets: columnTransitionEvents.map((eventDataSet) => {
         const eventData = eventDataSet.eventData;
         const dayZero = new Date(eventData[0].timestamp) * 1;
@@ -42,12 +42,13 @@
 
         return {
           data: columnData,
-          spanGaps: true
+          fill: false,
+          lineTension: 0,
+          spanGaps: true,
         };
-      })
+      }).reverse()
     };
 
-    console.log(data);
     return data;
   }
 
@@ -65,13 +66,23 @@
       type: 'line',
       data: getChartFriendlyData(),
       options: {
+        legend: {
+          display: false,
+        },
         scales: {
+          xAxes: [{
+            position: 'top',
+            ticks: {
+              reverse: true,
+            }
+          }],
           yAxes: [{
             scaleLabel: {
               display: true,
               labelString: 'Number of days',
             },
             ticks: {
+              reverse: true,
               beginAtZero: true,
             },
           }]
