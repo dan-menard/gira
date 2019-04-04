@@ -158,6 +158,20 @@
       })
   }
 
+  function getProjectInfo(headers) {
+    fetch(githubApi + `projects/${projectId}`, {headers})
+      .then((projectInfoResponse) => {
+        projectInfoResponse.json().then((projectInfoData) => {
+          const link = document.createElement('a');
+          link.href = projectInfoData.html_url;
+          link.innerHTML = projectInfoData.name;
+
+          const h1 = document.querySelector('h1');
+          h1.appendChild(link);
+        });
+      });
+  }
+
   function getTokenAndData() {
     fetch(new Request('/githubToken'))
       .then((response) => {
@@ -168,6 +182,7 @@
           };
 
           getColumnsAndCards(headers);
+          getProjectInfo(headers);
         });
       });
   }

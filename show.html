@@ -12,9 +12,22 @@
   </head>
 
   <body>
-    <div class="chartWrapper">
-      <canvas id="transitionChart"></canvas>
-      <p class="axisLabel">Number of days open</p>
+    <h1 class="projectTitle"></h1>
+
+    <div class="report">
+      <div class="chartWrapper">
+        <canvas id="transitionChart"></canvas>
+        <p class="axisLabel">Number of days open</p>
+      </div>
+
+      <div class="chartWrapperAdvice">
+        <p>This graph shows how long issues are open, and how they move between different columns on the project board. Some things to look out for:</p>
+
+        <ul>
+          <li>Dark areas show where many issues spend a lot of time. If you have one column label that's much darker than the others, it could indicate a bottleneck in your workflow.</li>
+          <li>Issues that have spent a very long time in one column are suspcious. They might be blocked, forgotten, or duplicates.</li>
+        </ul>
+      </div>
     </div>
   </body>
 </html>
