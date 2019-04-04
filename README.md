@@ -14,6 +14,6 @@ GITHUB_TOKEN=123456789
 
 ## Run
 
-To run the project, clone this repo and run `npm server.js`. The app is now available at localhost:8080.
+To run the project, clone this repo and run `node server.js`. The app is now available at localhost:8080.
 
 This project uses the JS `fetch` API, and I didn't polyfill it, so use a modern browser 🙂
