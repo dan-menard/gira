@@ -2,6 +2,7 @@
   const githubApi = 'https://api.github.com/';
   const projectId = window.location.pathname.slice(1);
   const columnTransitionEvents = [];
+  const columnNames = [];
 
   // Track when we're "done" fetching data.
   let requestCount = 0;
@@ -15,6 +16,9 @@
     // 'reopened', TODO: handle this in the future
   ];
 
+  function getChartFriendlyData() {
+  }
+
   function generateTransitionReport() {
     if (requestCount && requestCount !== responseCount) {
       return;
@@ -23,7 +27,14 @@
     requestCount = 0;
     responseCount = 0;
 
-    console.log(columnTransitionEvents);
+    const chartNode = document.querySelector('#transitionChart');
+
+    const transitionChart = new Chart(chartNode, {
+      type: 'line',
+      data: getChartFriendlyData(),
+      options: {
+      }
+    });
   }
 
   function getEventStream(card, headers) {
@@ -73,6 +84,8 @@
       .then((columnResponse) => {
         columnResponse.json().then((columnData) => {
           columnData.forEach((datum) => {
+            columnNames.push(datum.name);
+
             fetch(datum.cards_url, {headers})
               .then((cardResponse) => {
                 cardResponse.json().then((cardData) => {
@@ -101,6 +114,8 @@
   }
 
   window.onload = function() {
+    Chart.platform.disableCSSInjection = true;
+
     getTokenAndData();
   };
 })();
