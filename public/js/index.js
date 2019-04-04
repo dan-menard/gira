@@ -38,14 +38,14 @@
       }
     })
       .then(function(response) {
-        response.json().then(function(data) {
+        response.json().then((data) => {
           if (data.length === 0) {
             return;
           }
 
           let projectList = document.querySelector('#projectResults');
 
-          data.forEach(function(datum) {
+          data.forEach((datum) => {
             let li = document.createElement('li');
             let button = document.createElement('button');
 
@@ -63,8 +63,8 @@
 
   function getToken() {
     fetch(new Request('/githubToken'))
-      .then(function(response) {
-        response.json().then(function(data) {
+      .then((response) => {
+        response.json().then((data) => {
           token = data.token;
         });
       });

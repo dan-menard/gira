@@ -37,10 +37,10 @@
     requestCount++;
 
     fetch(eventStreamUrl, {headers: eventStreamHeaders})
-      .then(function(response) {
+      .then((response) => {
         responseCount++;
 
-        response.json().then(function(data) {
+        response.json().then((data) => {
           const events = data.filter((datum) => {
             return interestingEventTypes.includes(datum.event);
           });
@@ -70,13 +70,13 @@
 
   function getColumnsAndCards(headers) {
     fetch(githubApi + `projects/${projectId}/columns`, {headers})
-      .then(function(columnResponse) {
-        columnResponse.json().then(function(columnData) {
-          columnData.forEach(function(datum) {
+      .then((columnResponse) => {
+        columnResponse.json().then((columnData) => {
+          columnData.forEach((datum) => {
             fetch(datum.cards_url, {headers})
-              .then(function(cardResponse) {
-                cardResponse.json().then(function(cardData) {
-                  cardData.forEach(function(card) {
+              .then((cardResponse) => {
+                cardResponse.json().then((cardData) => {
+                  cardData.forEach((card) => {
                     getEventStream(card, headers);
                   });
                 });
@@ -88,8 +88,8 @@
 
   function getTokenAndData() {
     fetch(new Request('/githubToken'))
-      .then(function(response) {
-        response.json().then(function(data) {
+      .then((response) => {
+        response.json().then((data) => {
           const headers = {
             'Accept': 'application/vnd.github.inertia-preview+json',
             'Authorization': `token ${data.token}`,
