@@ -1,8 +1,9 @@
 (function() {
   const githubApi = 'https://api.github.com/';
   const projectId = window.location.pathname.slice(1);
-  const columnTransitionEvents = [];
+
   const columnNames = [];
+  const columnTransitionEvents = [];
 
   // Track when we're "done" fetching data.
   let requestCount = 0;
@@ -16,7 +17,40 @@
     // 'reopened', TODO: handle this in the future
   ];
 
+  // TODO: This assumes column moves are always forward, doesn't account for issues going backwards
   function getChartFriendlyData() {
+    const data = {
+      labels: columnNames,
+      datasets: columnTransitionEvents.map((eventDataSet) => {
+        const eventData = eventDataSet.eventData;
+        const dayZero = new Date(eventData[0].timestamp) * 1;
+
+        const columnData = columnNames.map((columnName) => {
+          const matchingEvent = eventData.filter((eventDatum) => {
+            return eventDatum.toColumn === columnName;
+          });
+
+          if (!matchingEvent.length) {
+            return undefined; // TODO: does this actually work?
+          }
+
+          const happenedAt = new Date(matchingEvent[0].timestamp) * 1;
+          console.log(happenedAt);
+          console.log(dayZero);
+          console.log('');
+          const dayCount = Math.round((happenedAt - dayZero) / 1000 / 60 / 60 / 24);
+
+          return dayCount;
+        });
+
+        return {
+          data: columnData
+        };
+      })
+    };
+
+    console.log(data);
+    return data;
   }
 
   function generateTransitionReport() {
@@ -24,6 +58,9 @@
       return;
     }
 
+    //console.log(columnTransitionEvents);
+
+    console.log('called');
     requestCount = 0;
     responseCount = 0;
 
@@ -33,6 +70,17 @@
       type: 'line',
       data: getChartFriendlyData(),
       options: {
+        scales: {
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Number of days',
+            },
+            ticks: {
+              beginAtZero: true,
+            },
+          }]
+        }
       }
     });
   }
