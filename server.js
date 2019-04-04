@@ -6,11 +6,11 @@ var app = express();
 
 app.use(express.static('public'))
 
-app.get('/', function(req, res) {
+app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname + '/index.html'));
 });
 
-app.get('/[0-9]+', function(req, res) {
+app.get('/[0-9]+', (req, res) => {
   res.sendFile(path.join(__dirname + '/show.html'));
 });
 
@@ -22,8 +22,8 @@ app.get('/chartcss', (req, res) => {
   res.sendFile(path.join(__dirname + '/node_modules/chart.js/dist/Chart.css'));
 });
 
-app.get('/githubToken', function(req, res) {
-  fs.readFile(path.join(__dirname + '/.env'), function(err, data) {
+app.get('/githubToken', (req, res) => {
+  fs.readFile(path.join(__dirname + '/.env'), (err, data) => {
     if (err) {
       next(err);
     }
