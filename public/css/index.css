@@ -64,3 +64,7 @@ li:nth-child(2n) button:hover {
 li:nth-child(3n) button:hover {
   background-color: #ffff66;
 }
+
+.card p {
+  margin-top: 0;
+}

@@ -62,7 +62,9 @@
 
     requestCount = 0;
     responseCount = 0;
+
     loader.stopLoading();
+    document.querySelector('.report').classList.remove('hide');
 
     const chartNode = document.querySelector('#transitionChart');
 
@@ -171,6 +173,7 @@
 
           const h1 = document.querySelector('h1');
           h1.appendChild(link);
+          h1.parentElement.classList.remove('hide');
         });
       });
   }
