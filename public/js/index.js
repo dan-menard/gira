@@ -1,6 +1,7 @@
 (function() {
   const githubApi = 'https://api.github.com/';
   let token = '';
+  let loader;
 
   function validateProjectResultClick(event) {
     const targetId = event.target.id;
@@ -28,6 +29,7 @@
     // page is only 1 if the button was just clicked
     if (page === 1) {
       clearResults();
+      loader.startLoading();
       window.localStorage.setItem('orgSlashRepo', orgSlashRepo);
     }
 
@@ -40,6 +42,7 @@
       .then(function(response) {
         response.json().then((data) => {
           if (data.length === 0) {
+            loader.stopLoading();
             return;
           }
 
@@ -84,6 +87,8 @@
   }
 
   window.onload = function() {
+    loader = new Loader();
+
     getToken();
     setEventHandlers();
     loadMostRecentProjectSearch();

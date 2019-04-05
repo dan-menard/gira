@@ -1,0 +1,26 @@
+body.one {
+  background: repeating-linear-gradient(
+    -45deg,
+    #ff66ff, #ff66ff 20px,
+    #66ffff 20px, #66ffff 40px,
+    #ffff66 40px, #ffff66 60px
+  );
+}
+
+body.two {
+  background: repeating-linear-gradient(
+    -45deg,
+    #ffff66, #ffff66 20px,
+    #ff66ff 20px, #ff66ff 40px,
+    #66ffff 40px, #66ffff 60px
+  );
+}
+
+body.three {
+  background: repeating-linear-gradient(
+    -45deg,
+    #66ffff, #66ffff 20px,
+    #ffff66 20px, #ffff66 40px,
+    #ff66ff 40px, #ff66ff 60px
+  );
+}

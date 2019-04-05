@@ -5,6 +5,8 @@
   const columnNames = [];
   const columnTransitionEvents = [];
 
+  let loader;
+
   // Track when we're "done" fetching data.
   let requestCount = 0;
   let responseCount = 0;
@@ -60,6 +62,7 @@
 
     requestCount = 0;
     responseCount = 0;
+    loader.stopLoading();
 
     const chartNode = document.querySelector('#transitionChart');
 
@@ -189,6 +192,9 @@
 
   window.onload = function() {
     Chart.platform.disableCSSInjection = true;
+
+    loader = new Loader();
+    loader.startLoading();
 
     getTokenAndData();
   };
