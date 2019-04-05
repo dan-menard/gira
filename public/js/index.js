@@ -43,6 +43,7 @@
         response.json().then((data) => {
           if (data.length === 0) {
             loader.stopLoading();
+            document.querySelector('#resultsWrapper').classList.remove('hide');
             return;
           }
 

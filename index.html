@@ -12,14 +12,17 @@
   </head>
 
   <body class="one">
-    <p>Where do your projects live?</p>
+    <div class="layout">
+      <div class="card">
+        <label for="projectLocation">Where do your projects live?</label>
+        <input class="formElement" id="projectLocation" type="text" />
+        <button class="formElement" id="loadProjectsButton">Go</button>
+      </div>
 
-    <input id="projectLocation" type="text" />
-    <button id="loadProjectsButton">Go</button>
-
-    <div id="searchableResults">
-      <ul id="projectResults">
-      </ul>
+      <div class="card hide" id="resultsWrapper">
+        <ul id="projectResults">
+        </ul>
+      </div>
     </div>
   </body>
 </html>
