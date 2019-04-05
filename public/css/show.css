@@ -35,12 +35,16 @@ canvas {
   transform: rotate(270deg);
 }
 
-.chartWrapper {
+.transitionChartWrapper {
   position: relative;
   width: 400px;
   height: 800px;
   margin: -190px 200px;
   padding-bottom: 40px;
+}
+
+.chartWrapper {
+  width: 800px;
 }
 
 .axisLabel {

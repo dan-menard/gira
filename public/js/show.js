@@ -1,5 +1,4 @@
-(function() {
-  const githubApi = 'https://api.github.com/';
+(function() {  const githubApi = 'https://api.github.com/';
   const projectId = window.location.pathname.slice(1);
 
   const columnNames = [];
@@ -7,20 +6,20 @@
 
   let loader;
 
+  const issueOpenDates = [];
+  const issueClosedDates = [];
+
   // Track when we're "done" fetching data.
   let requestCount = 0;
   let responseCount = 0;
 
   const interestingEventTypes = [
     'added_to_project',
-    // 'closed', TODO: handle this in the future
     'converted_note_to_issue',
     'moved_columns_in_project',
-    // 'reopened', TODO: handle this in the future
   ];
 
-  // TODO: This assumes column moves are always forward, doesn't account for issues going backwards
-  function getChartFriendlyData() {
+  function getTransitionReportData() {
     const data = {
       labels: columnNames.reverse(),
       datasets: columnTransitionEvents.map((eventDataSet) => {
@@ -56,21 +55,11 @@
   }
 
   function generateTransitionReport() {
-    if (requestCount && requestCount !== responseCount) {
-      return;
-    }
-
-    requestCount = 0;
-    responseCount = 0;
-
-    loader.stopLoading();
-    document.querySelector('.report').classList.remove('hide');
-
     const chartNode = document.querySelector('#transitionChart');
 
     const transitionChart = new Chart(chartNode, {
       type: 'line',
-      data: getChartFriendlyData(),
+      data: getTransitionReportData(),
       options: {
         animation: {
           duration: 0,
@@ -101,6 +90,126 @@
     });
   }
 
+  // If first date is within an hour of midnight,
+  // this will report slightly incorrectly if DST starts/ends between first and last date.
+  function generateOpenVsClosedReport() {
+    const chartNode = document.querySelector('#openVsClosedChart');
+
+    const sortedOpenDates = issueOpenDates.sort((a, b) => {
+      return new Date(a) - new Date(b);
+    });
+
+    const sortedClosedDates = issueClosedDates.sort((a, b) => {
+      return new Date(a) - new Date(b);
+    });
+
+    const lastOpenDate = new Date(sortedOpenDates[sortedOpenDates.length - 1]);
+    const lastClosedDate = new Date(sortedClosedDates[sortedClosedDates.length - 1]);
+
+    const lastDate = lastOpenDate - lastClosedDate > 0 ? lastOpenDate : lastClosedDate;
+    const firstDate = new Date(sortedOpenDates[0]);
+
+    const oneDayInMilliseconds = 1000 * 60 * 60 * 24;
+
+    const formatDate = (date) => {
+      return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+    };
+
+    let nextDate = new Date((firstDate * 1) + oneDayInMilliseconds);
+    let allDates = [firstDate];
+
+    while (nextDate * 1 < lastDate * 1) {
+      allDates.push(nextDate);
+      nextDate = new Date((nextDate * 1) + oneDayInMilliseconds);
+    }
+
+    allDates.push(lastDate);
+
+    const dateLabels = allDates.map((date) => {
+      return formatDate(date);
+    });
+
+    let lastOpenCount = 0;
+
+    const openDataset = dateLabels.map((dateString) => {
+      let count = 0;
+
+      if (issueOpenDates.length) {
+        while (formatDate(new Date(issueOpenDates[0])) === dateString) {
+          count++;
+          issueOpenDates.shift();
+        }
+      }
+
+      lastOpenCount += count;
+      return lastOpenCount;
+    });
+
+    let lastClosedCount = 0;
+
+    const closedDataset = dateLabels.map((dateString) => {
+      let count = 0;
+
+      if (issueClosedDates.length) {
+        while (formatDate(new Date(issueClosedDates[0])) === dateString) {
+          count++;
+          issueClosedDates.shift();
+        }
+      }
+
+      lastClosedCount += count;
+      return lastClosedCount;
+    });
+
+    const transitionChart = new Chart(chartNode, {
+      type: 'line',
+      data: {
+        labels: dateLabels,
+        datasets: [{
+          data: openDataset,
+          fill: false,
+          label: 'Open',
+          borderColor: '#ffff66',
+        }, {
+          data: closedDataset,
+          fill: false,
+          label: 'Closed',
+          borderColor: '#66ffff',
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            scaleLabel: {
+              display: false,
+            },
+            ticks: {
+              beginAtZero: true,
+            },
+          }]
+        }
+      }
+    });
+  }
+
+  function generateReports() {
+    if (requestCount && requestCount !== responseCount) {
+      return;
+    }
+
+    requestCount = 0;
+    responseCount = 0;
+
+    generateTransitionReport();
+    generateOpenVsClosedReport();
+
+    loader.stopLoading();
+
+    document.querySelectorAll('.report').forEach((report) => {
+      report.classList.remove('hide');
+    });
+  }
+
   function getEventStream(card, headers) {
     const eventStreamUrl = githubApi + card.content_url.split('com/')[1] + '/timeline';
 
@@ -110,6 +219,7 @@
     };
 
     requestCount++;
+    issueOpenDates.push(card.created_at);
 
     fetch(eventStreamUrl, {headers: eventStreamHeaders})
       .then((response) => {
@@ -117,6 +227,10 @@
 
         response.json().then((data) => {
           const events = data.filter((datum) => {
+            if (datum.event === 'closed') {
+              issueClosedDates.push(datum.created_at);
+            }
+
             return interestingEventTypes.includes(datum.event);
           });
 
@@ -138,7 +252,7 @@
             });
           }
 
-          generateTransitionReport();
+          generateReports();
         });
       });
   }

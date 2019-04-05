@@ -21,7 +21,7 @@
       </div>
 
       <div class="report card hide">
-        <div class="chartWrapper">
+        <div class="transitionChartWrapper">
           <canvas id="transitionChart"></canvas>
           <p class="axisLabel hide">Number of days open</p>
         </div>
@@ -33,6 +33,18 @@
             <li>Dark areas show where many issues spend a lot of time. If you have one column label that's much darker than the others, it could indicate a bottleneck in your workflow.</li>
             <li>Issues that have spent a very long time in one column are suspcious. They might be blocked, forgotten, or duplicates.</li>
           </ul>
+        </div>
+      </div>
+
+      <div class="report card hide">
+        <div class="chartWrapper">
+          <canvas id="openVsClosedChart"></canvas>
+        </div>
+
+        <div class="chartWrapperAdvice">
+          <p>This graph shows how many issues have been opened and closed since the project began.</p>
+
+          <p>If these lines are getting closer together, you're trending towards launch!</p>
         </div>
       </div>
     </div>
